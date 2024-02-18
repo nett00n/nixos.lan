@@ -15,9 +15,8 @@
 
   environment.systemPackages = with pkgs;
       [
-	act
-	ansible
-	tmux
+        act
+        ansible
         curl
         doggo
         gh
@@ -32,6 +31,7 @@
         openvscode-server
         python3
         starship
+        tmux
         wget
       ];
 
@@ -55,8 +55,25 @@
       LC_TIME = "ru_RU.UTF-8";
     };
 
+  networking.defaultGateway = "192.168.1.1";
+  networking.enableIPv6 = false;
   networking.firewall.enable = false;
   networking.hostName = "nixos";
+  networking.interfaces.eth0.ipv4.addresses =
+  [
+    {
+      address = "192.168.1.99";
+      prefixLength = 24;
+    }
+  ];
+  networking.nameservers =
+  [
+    "208.67.222.222"
+    "208.67.220.220"
+    "9.9.9.9"
+    "1.1.1.1"
+    "8.8.8.8"
+  ];
   networking.networkmanager.enable = true;
 
   nixpkgs.config.allowUnfree = true;
@@ -120,3 +137,4 @@
   virtualisation.docker.enable = true;
 
 }
+
