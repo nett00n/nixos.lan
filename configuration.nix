@@ -1,5 +1,47 @@
 { config, pkgs, ... }:
 
+let
+  # Define variables for repetitive values
+  myIpAddress = "192.168.1.99";
+  myNetworkGateway = "192.168.1.1";
+  myNameservers = [
+    "208.67.222.222"
+    "208.67.220.220"
+    "9.9.9.9"
+    "1.1.1.1"
+    "8.8.8.8"
+  ];
+  myLocale = "en_US.UTF-8";
+  myTimezone = "Asia/Tbilisi";
+  # List of system packages
+  mySystemPackages = [
+    pkgs.act
+    pkgs.ansible
+    pkgs.bat
+    pkgs.curl
+    pkgs.du-dust
+    pkgs.duf
+    pkgs.fd
+    pkgs.gh
+    pkgs.git
+    pkgs.glab
+    pkgs.glances
+    pkgs.gping
+    pkgs.hugo
+    pkgs.mc
+    pkgs.ncdu
+    pkgs.neovim
+    pkgs.nushell
+    pkgs.openvscode-server
+    pkgs.procs
+    pkgs.python3
+    pkgs.starship
+    pkgs.tmux
+    pkgs.wget
+    pkgs.q
+    pkgs.yq-go
+  ];
+in
 {
   imports =
     [ ./hardware-configuration.nix ];
@@ -9,59 +51,25 @@
   boot.loader.grub.useOSProber = true;
   boot.supportedFilesystems = [ "ntfs" ];
 
-  environment.systemPackages = with pkgs; [
-    act
-    ansible
-    curl
-    doggo
-    gh
-    git
-    glab
-    glances
-    hugo
-    mc
-    ncdu
-    neovim
-    nushell
-    openvscode-server
-    python3
-    starship
-    tmux
-    wget
-  ];
+  environment.systemPackages = mySystemPackages;
 
   fileSystems."/media/Content" =
     { device = "/dev/disk/by-uuid/14CA2BE5CA2BC23A"; fsType = "ntfs-3g"; };
 
-  i18n.defaultLocale = "en_US.UTF-8";
-  i18n.extraLocaleSettings =
-    { LC_ADDRESS = "ru_RU.UTF-8";
-      LC_IDENTIFICATION = "ru_RU.UTF-8";
-      LC_MEASUREMENT = "ru_RU.UTF-8";
-      LC_MONETARY = "ru_RU.UTF-8";
-      LC_NAME = "ru_RU.UTF-8";
-      LC_NUMERIC = "ru_RU.UTF-8";
-      LC_PAPER = "ru_RU.UTF-8";
-      LC_TELEPHONE = "ru_RU.UTF-8";
-      LC_TIME = "ru_RU.UTF-8"; };
+  i18n.defaultLocale = myLocale;
 
-  networking.defaultGateway = "192.168.1.1";
+  networking.defaultGateway = myNetworkGateway;
   networking.enableIPv6 = false;
   networking.firewall.enable = false;
   networking.hostName = "nixos";
   networking.interfaces.eth0.ipv4.addresses =
-    [{ address = "192.168.1.99"; prefixLength = 24; }];
-  networking.nameservers =
-    [ "208.67.222.222"
-      "208.67.220.220"
-      "9.9.9.9"
-      "1.1.1.1"
-      "8.8.8.8" ];
+    [{ address = myIpAddress; prefixLength = 24; }];
+  networking.nameservers = myNameservers;
   networking.networkmanager.enable = true;
 
   nixpkgs.config.allowUnfree = true;
 
-  time.timeZone = "Asia/Tbilisi";
+  time.timeZone = myTimezone;
 
   security.sudo.extraRules =
     [ { users = [ "nett00n" ];
@@ -94,15 +102,4 @@
 
   virtualisation.docker.enable = true;
 
-  systemd.services.issue = 
-  {
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      ExecStart = ''
-        /run/current-system/sw/bin/echo -e "\\nWelcome to \\nHostname: $(hostname)\\nOS Version: $(cat /etc/os-release | grep PRETTY_NAME | cut -d= -f2)\\nIP Address: $(/run/current-system/sw/bin/get-eth0-ip-address.sh)";
-      '';
-      StandardOutput = "tty";
-    };
-  };
 }
-
