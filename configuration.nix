@@ -14,6 +14,7 @@ let
     pkgs.ansible
     pkgs.bat
     pkgs.curl
+    pkgs.direnv
     pkgs.du-dust
     pkgs.duf
     pkgs.fd
@@ -30,10 +31,10 @@ let
     pkgs.openvscode-server
     pkgs.procs
     pkgs.python3
+    pkgs.q
     pkgs.starship
     pkgs.tmux
     pkgs.wget
-    pkgs.q
     pkgs.yq-go
   ];
 in {
@@ -99,10 +100,15 @@ in {
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
       ExecStart =
-        "/run/current-system/sw/bin/openvscode-server --host 0.0.0.0 --port 3001 --accept-server-license-terms --telemetry-level off --without-connection-token";
+        "/run/current-system/sw/bin/openvscode-server"
+          + " --host 0.0.0.0"
+          + " --port 3001"
+          + " --accept-server-license-terms"
+          + " --telemetry-level off"
+          + " --without-connection-token";
       Restart = "always";
       RestartSec = "30";
-      User = "root";
+      User = "nett00n";
     };
   };
 
