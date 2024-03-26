@@ -29,8 +29,13 @@ let
     pkgs.neovim
     pkgs.nushell
     pkgs.openvscode-server
+    pkgs.pre-commit
     pkgs.procs
-    pkgs.python3
+    pkgs.python311
+    pkgs.python311Packages.autoflake
+    pkgs.python311Packages.black
+    pkgs.python311Packages.flake8
+    pkgs.python311Packages.isort
     pkgs.q
     pkgs.starship
     pkgs.tmux
